@@ -3,11 +3,16 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link rel="con" type="image/png" sizes="100x100" href="favicon.ico">
+		<link rel="icon" type="image/png" sizes="100x100" href="favicon.ico">
 		<link rel="apple-touch-icon" type="image/png" sizes="100x100" href="favicon.ico">
 		<title>CSUF ACM Webring</title>
 	</head>
 	<body>
+		<nav id="ring-nav">
+			<a href="#" id="prev">← Prev</a>
+			<a href="#" id="random">Random</a>
+			<a href="#" id="next">Next →</a>
+		</nav>
 		<ol id="icons">
 			<li data-lang="en" id="lyyeric">
 				<a href="https://lyyeric.tech">lyyeric.tech</a>
@@ -18,38 +23,63 @@
 				A webring for CSUF ACM friends. Share your personal sites, portfolios, and projects!
 			</p>
 			<p>
-				Want to join? <a href="https://github.com/lyyeric/webring" target="_blank">Submit a pull request</a>.<br />
+				Want to join? <a href="https://github.com/lyeric2022/webring-1" target="_blank">Submit a pull request</a>.<br />
 				<a href="#icons">Show icons</a> | <a href="#rss">Show rss</a><span class="hide"> | <a href="#">Hide Feeds</a></span>
 			</p>
 			<img id="icon" src="icon.black.large.svg" alt="icon" width="300" height="300">
 		</footer>
 		<style>
 			:root { --color-alpha: white; --color-beta: black; }
-			body { padding: 0; margin: 0 0 0 0; background-color: var(--color-alpha); color: var(--color-beta); font-family: serif; max-width: 900px; }
+			body { padding: 0; margin: 0; background-color: var(--color-alpha); color: var(--color-beta); font-family: serif; max-width: 900px; }
 			body a { color: var(--color-beta); text-decoration: none; }
 			body a:hover { background-color: var(--color-beta); color: var(--color-alpha); }
 			body a:before { content: '{'; }
 			body a:after { content: '}'; }
-			body > ol { margin: 30px; padding: 0px 30px 30px; column-count: 3; display: block; border-bottom: 2px solid var(--color-beta); }
-			body > ol > li { padding-right: 30px; }
+			
+			#ring-nav { margin: 30px 30px 0; padding: 15px 0; border-bottom: 2px solid var(--color-beta); display: flex; gap: 20px; }
+			#ring-nav a { font-size: 1.1rem; }
+			
+			body > ol { margin: 30px; padding: 0px 30px 30px; display: block; border-bottom: 2px solid var(--color-beta); }
+			body > ol > li { padding: 5px 0; }
 			body > ol > li img { display: none; margin: 5px; max-width: 88px; height: auto; font-style: italic; overflow: hidden; }
 			body > ol > li a.rss { display: none; }
 			body > ol > li a:visited:before, body > ol > li a:visited:after { color: var(--color-alpha); }
 			body > footer { margin: 30px; }
 			body > footer > p { max-width: 600px; }
 			body > footer > p span.hide { display: none; }
-			body > footer > img { display: inline-block; width: 100px; height: auto; margin-bottom: -5px; margin-bottom: 30px; }
+			body > footer > img { display: inline-block; width: 100px; height: auto; margin-bottom: 30px; }
 			html:target li a.rss { background: var(--color-beta); color: var(--color-alpha); display: inline; }
 			body:target > footer > p > span.hide, html:target footer > p > span.hide { display: inline; }
 			#icons:target img, #icons:target picture { display: block; }
 			body > ol > li:target a { color: var(--color-alpha); }
 			body > ol > li:target { background: var(--color-beta); }
-			@media screen and (max-width: 800px) { body > ol { column-count: 2; } }
-			@media screen and (max-width: 600px) { body > ol { column-count: 1; } }
 			@media (prefers-color-scheme: dark) {
 				:root { --color-alpha: black; --color-beta: white; }
 				#icon { filter: invert(100%); }
 			}
 		</style>
+		<script>
+			(function() {
+				const sites = Array.from(document.querySelectorAll('ol#icons li a'));
+				let currentIndex = 0;
+				
+				// Check for hash navigation (coming from a member site)
+				const hash = window.location.hash.replace('#', '').trim().toLowerCase();
+				if (hash) {
+					const ids = sites.map((_, i) => document.querySelectorAll('ol#icons li')[i].id.toLowerCase());
+					const index = ids.findIndex(id => hash.includes(id) || id.includes(hash));
+					if (index >= 0) currentIndex = index;
+				}
+				
+				function goTo(index) {
+					currentIndex = ((index % sites.length) + sites.length) % sites.length;
+					window.location.href = sites[currentIndex].href;
+				}
+				
+				document.getElementById('prev').onclick = (e) => { e.preventDefault(); goTo(currentIndex - 1); };
+				document.getElementById('next').onclick = (e) => { e.preventDefault(); goTo(currentIndex + 1); };
+				document.getElementById('random').onclick = (e) => { e.preventDefault(); goTo(Math.floor(Math.random() * sites.length)); };
+			})();
+		</script>
 	</body>
 </html>
