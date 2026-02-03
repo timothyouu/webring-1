@@ -6,6 +6,32 @@
 		<link rel="icon" type="image/png" sizes="100x100" href="favicon.ico">
 		<link rel="apple-touch-icon" type="image/png" sizes="100x100" href="favicon.ico">
 		<title>CSUF ACM Webring</title>
+		<script>
+			// Instant redirect for prev/next navigation (runs before page renders)
+			(function() {
+				const sites = [
+					{ id: 'lyyeric', url: 'https://lyyeric.tech' }
+				];
+				
+				const params = new URLSearchParams(window.location.search);
+				const from = params.get('from')?.toLowerCase();
+				const dir = params.get('dir');
+				
+				if (from && dir) {
+					const index = sites.findIndex(s => from.includes(s.id) || s.id.includes(from));
+					if (index >= 0) {
+						let targetIndex;
+						if (dir === 'prev') targetIndex = ((index - 1) + sites.length) % sites.length;
+						else if (dir === 'next') targetIndex = (index + 1) % sites.length;
+						else if (dir === 'random') targetIndex = Math.floor(Math.random() * sites.length);
+						
+						if (targetIndex !== undefined) {
+							window.location.replace(sites[targetIndex].url);
+						}
+					}
+				}
+			})();
+		</script>
 	</head>
 	<body>
 		<nav id="ring-nav">
